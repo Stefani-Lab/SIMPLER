@@ -10,6 +10,11 @@ cla reset;
 cla reset;
     axes(handles.axes6); 
 cla reset;
+cla reset;
+    axes(handles.axes7); 
+cla reset;
+    axes(handles.axes8); 
+cla reset;
 set(handles.axes1,'visible', 'off');
 set(handles.open_fig_1_tag,'visible', 'off');
 set(handles.axes3,'visible', 'off');
@@ -35,6 +40,20 @@ set(handles.r_fit_tag,'visible', 'off');
 set(handles.circ_fit_tag,'visible', 'off'); 
 set(handles.hist_settings_panel_tag,'visible', 'off'); 
 set(handles.calc_exc_prof_tag,'visible', 'off'); 
+set(handles.slider_1_tag,'visible', 'off'); 
+set(handles.slider_3_tag,'visible', 'off'); 
+set(handles.slider_1_text_tag,'visible', 'off'); 
+set(handles.slider_3_text_tag,'visible', 'off'); 
+set(handles.axes7,'visible', 'off'); 
+set(handles.axes8,'visible', 'off'); 
+set(handles.set_small_roi_tag,'visible', 'off'); 
+set(handles.roi_angle_text_tag,'visible', 'off'); 
+set(handles.angle_ROI_tag,'visible', 'off'); 
+set(handles.plot_xz_tag,'visible', 'off'); 
+set(handles.plot_yz_tag,'visible', 'off'); 
+set(handles.marker_size_roi_text_tag,'visible', 'off'); 
+set(handles.slider_markersize_roi_tag,'visible', 'off'); 
+set(handles.export_roi_tag,'visible', 'off'); 
 
 
 % Filename, file format and camera pixel size

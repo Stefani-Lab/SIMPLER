@@ -4,7 +4,6 @@ list_xyz = [frame x1 y1 z photons];
 list_rz = [frame proyec_r z photons];
 
 % Save list as .csv
-csv_out_folder = pwd;       % the folder to save the output (converted) file.
 out_file_extn = '.csv';     % the extension for the output file.
 out_file_delimiter = ',';   % the data-delimiter for the output file
 add_headers = true;         % add a headers line to the output file; 
@@ -30,11 +29,14 @@ if sum(get(handles.axes5,'visible')) == 315 % This line checks if
                                          % (additionally to the
                                          % (r,z).csv file)
 
-
     [~, hdf5_name, ~] = fileparts(hdf5_filename); % get the name of
                    % the input file without the file-extension
+    [file,path]= uiputfile([hdf5_name,'_SIMPLER_xyz.csv']);
+    csv_out_folder = path;
     csv_out_fname = fullfile(csv_out_folder,...
-    [hdf5_name, '_SIMPLER_xyz',out_file_extn]); % create output name
+    file); % create output name                                     
+                                                                                  
+    
     if add_headers
         fid = fopen(csv_out_fname, 'wt'); % create and open the output
                                           % file for writing
@@ -49,10 +51,14 @@ if sum(get(handles.axes5,'visible')) == 315 % This line checks if
     out_file_delimiter, 'precision', '%10.4f', '-append'); 
     % append the rest of the data to the file
     
-    [~, hdf5_name, ~] = fileparts(hdf5_filename); 
-    % get the name of the input file without the file-extension
+    
+    [~, hdf5_name, ~] = fileparts(hdf5_filename); % get the name of
+                   % the input file without the file-extension
+    [file,path]= uiputfile([hdf5_name,'_SIMPLER_rz.csv']);
+    csv_out_folder = path;
     csv_out_fname = fullfile(csv_out_folder,...
-        [hdf5_name, '_SIMPLER_rz',out_file_extn]); % create output name
+    file); % create output name     
+
     if add_headers
         fid = fopen(csv_out_fname, 'wt'); % create and open the output 
                                           % file for writing
@@ -68,10 +74,12 @@ if sum(get(handles.axes5,'visible')) == 315 % This line checks if
 
 else % If the last operation run is 'Incidence angle and alpha adjustment':
 
-    [~, hdf5_name, ~] = fileparts(hdf5_filename); 
-    % get the name of the input file without the file-extension
-    csv_out_fname = fullfile(csv_out_folder,...
-        [hdf5_name, '_SIMPLER_rz',out_file_extn]); % create output name
+        [~, hdf5_name, ~] = fileparts(hdf5_filename); % get the name of
+                   % the input file without the file-extension
+    [file,path]= uiputfile([hdf5_name,'_SIMPLER_rz.csv']);
+    csv_out_folder = path;
+        csv_out_fname = fullfile(csv_out_folder,...
+    file); % create output name     
     if add_headers
         fid = fopen(csv_out_fname, 'wt'); % create and open the output 
                                           % file for writing

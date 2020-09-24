@@ -39,7 +39,19 @@ function gauss_rendering_function(Magnif,sigma_width_nm,camera_px,simpler_output
             % rendering)
 
 
-        else 
+        elseif size(axref,1) > 1 % Last operation run = 'Large ROI'
+                axes(handles.axes8); 
+                rz_xyz_bis = 2;          
+            proyec_r = axref(:,2); % lateral positions (r)
+            xl = [min(proyec_r)-1 max(proyec_r)+1];
+            z = simpler_output(axref(:,1),3); % axial positions (z)
+            yl  = ylim;
+            gauss_rendering(Magnif,sigma_width_nm(1),sigma_width_nm(2),...
+                camera_px,proyec_r,z,xl,yl,rz_xyz_bis,z_color,auto_contrast);
+            % 'gauss_rendering.m' builds the matrix-image (Gaussian
+            % rendering)
+
+        else     
             rz_xyz_bis = 3; % Last operation run = 'Small ROI(x,y,z)'
             z = simpler_output(:,3); % axial positions (z)
             axes(handles.axes1); 

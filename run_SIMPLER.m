@@ -65,6 +65,10 @@ cla reset;
 cla reset;
     axes(handles.axes6); 
 cla reset;
+    axes(handles.axes7); 
+cla reset;
+    axes(handles.axes8); 
+cla reset;
 handles.output = hObject;
 set(handles.axes1,'visible', 'off'); 
 set(handles.axes3,'visible', 'off');
@@ -95,6 +99,19 @@ set(handles.slider_1_tag,'visible', 'off');
 set(handles.slider_3_tag,'visible', 'off'); 
 set(handles.slider_1_text_tag,'visible', 'off'); 
 set(handles.slider_3_text_tag,'visible', 'off'); 
+set(handles.axes7,'visible', 'off'); 
+set(handles.axes8,'visible', 'off'); 
+set(handles.set_small_roi_tag,'visible', 'off'); 
+set(handles.roi_angle_text_tag,'visible', 'off'); 
+set(handles.angle_ROI_tag,'visible', 'off'); 
+set(handles.plot_xz_tag,'visible', 'off'); 
+set(handles.plot_yz_tag,'visible', 'off'); 
+set(handles.marker_size_roi_text_tag,'visible', 'off'); 
+set(handles.slider_markersize_roi_tag,'visible', 'off'); 
+set(handles.export_roi_tag,'visible', 'off'); 
+
+
+
 
 
 addpath('Functions')
@@ -388,7 +405,15 @@ if (file_format == 1 && (sum(filename_wformat(end-3:end)=='hdf5')==4))...
                                                              % Otherwise, it is
                                                              % disabled.
             set(handles.render_tag,'enable','on');
-        elseif scatter_plot == 0
+        end
+        if scatter_plot == 0 || sum(get(handles.axes7,'visible')) == 221 % In any other case,
+                                                        % or if the
+                                                        % selected
+                                                        % operation was
+                                                        % "Large ROI", the
+                                                        % Gaussian
+                                                        % rendering option
+                                                        % is disabled.
             set(handles.render_tag,'enable','off');
         end     
     elseif rz_xyz==1 % If no Operation is chosen, an error message is shown.
@@ -1040,7 +1065,7 @@ simpler_output = evalin('base','simpler_output');
 % --- Executes on button press in open_fig_1_tag.
 function open_fig_1_tag_Callback(hObject, eventdata, handles)
 simpler_output = evalin('base','simpler_output');
-  if sum(simpler_output(:,5)) > size(simpler_output,1);
+  if sum(simpler_output(:,5)) > size(simpler_output,1)
         proyec_r = simpler_output(:,3);
         z = simpler_output(:,4);
         figure, scatter(proyec_r,z,10)
@@ -1048,7 +1073,7 @@ simpler_output = evalin('base','simpler_output');
         ylabel('z (nm)');
         daspect([1 1 1])
         pbaspect([1 1 1])
-  elseif sum(simpler_output(:,5)) == size(simpler_output,1);
+  elseif sum(simpler_output(:,5)) == size(simpler_output,1)
         x1 = simpler_output(:,1);
         z = simpler_output(:,3);
         figure, scatter(x1,z,10)
@@ -1068,6 +1093,7 @@ function render_tag_Callback(hObject, eventdata, handles)
 % This function performs the Gaussian rendering of the data displayed in
 % the scatter plots. 
 check_ax1 = get(handles.axes1,'visible');
+check_ax8 = get(handles.axes8,'visible');
 %First, it checks if the last operation run was 'Small ROI' or 'Incidence
 %angle and alpha adjustment'. If check_ax1 is visible (check_ax1 = 'on'),
 %it means that the last performed operation was 'Small ROI', and axref is
@@ -1077,6 +1103,12 @@ check_ax1 = get(handles.axes1,'visible');
 if evalin('base', 'exist(''simpler_output'',''var'')') && check_ax1(2) == 'n'
     simpler_output = evalin('base','simpler_output');
     axref = 1;
+elseif evalin('base', 'exist(''simpler_output'',''var'')') && check_ax8(2) == 'n'
+    simpler_output = evalin('base','simpler_output');
+    roi_index_proyec_r = evalin('base','roi_index_proyec_r');
+    axref = roi_index_proyec_r; 
+    % In this case, the last operation run was 'Large ROI'.
+    
 else % In this case, the last run operation corresponds to 'Incidence angle
     % and alpha adjustment'. The results from that operation are loaded as
     % 'output_ft_intput' and axref takes a value of 5. 
@@ -2038,6 +2070,7 @@ function calc_exc_prof_tag_Callback(hObject, eventdata, handles)
 if exist(get(handles.filename_tag,'string'))
     obtain_bg(handles);
     ff = msgbox('Done! Excitation profile has been exported to .csv');
+    set(handles.render_tag,'enable','off');
 else
     w = msgbox(['Filename not found. Please check. If it is not ',...
         'located in the current directory, include the directory',...
@@ -2056,9 +2089,18 @@ function slider_1_tag_Callback(hObject, eventdata, handles)
 
 slider_value = get(handles.slider_1_tag,'Value');
 
-axes(handles.axes1);
+ax1_vis = get(handles.axes1,'visible');
+ax2_vis = get(handles.axes7,'visible');
+
+if sum(ax1_vis) == 221
+    axes(handles.axes1);
     xlimits = xlim;
     h11 = findobj(gcf,'Type','scatter');
+else
+    axes(handles.axes7);
+    xlimits = xlim;
+    h11 = findobj(gcf,'Type','scatter');
+end
 
     if sum(size(h11))>0
     h11(1).SizeData = (10+60*slider_value)*250/(xlimits(2)-xlimits(1));
@@ -2113,3 +2155,233 @@ function slider_3_tag_CreateFcn(hObject, eventdata, handles)
 if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor',[.9 .9 .9]);
 end
+
+
+% --- Executes on button press in set_small_roi_tag.
+function set_small_roi_tag_Callback(hObject, eventdata, handles)
+roi = drawrectangle('StripeColor','y');
+assignin('base','roi',roi)
+set(handles.angle_ROI_tag,'enable','on');
+set(handles.angle_ROI_tag,'SliderStep',[0.001 0.1]);
+
+
+% --- Executes on slider movement.
+function angle_ROI_tag_Callback(hObject, eventdata, handles)
+roi = evalin('base','roi');
+slider_value = get(handles.angle_ROI_tag,'Value');
+
+roi.RotationAngle = 360*slider_value;
+ 
+
+
+
+% --- Executes during object creation, after setting all properties.
+function angle_ROI_tag_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to angle_ROI_tag (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in plot_yz_tag.
+function plot_yz_tag_Callback(hObject, eventdata, handles)
+roi = evalin('base','roi');
+simpler_output = evalin('base','simpler_output');
+angle_roi = (270-(roi.RotationAngle))*pi/180;
+positions_roi = roi.Position;
+x1 = simpler_output(:,1);
+y1 = simpler_output(:,2);
+z1 = simpler_output(:,3);
+[c,slope, origin] = find_points_ROI([x1 y1],...
+    angle_roi, positions_roi,'y');
+
+tita = atan(slope);
+
+if (slope>0) && (slope ~= atan(pi/2))
+    tita1= atan(abs((y1(c)-origin(2))./(x1(c)-origin(1))));
+    r = ((x1(c)-origin(1)).^2+(y1(c)-origin(2)).^2).^(1/2);
+
+    for i = 1:length(c)
+        if (x1(c(i)) > origin(1)) && (y1(c(i)) > origin(2))
+            tita2(i,1) = abs(tita-tita1(i));
+        elseif (x1(c(i)) > origin(1)) && (y1(c(i)) < origin(2))
+            tita2(i,1) = (tita+tita1(i));
+        elseif (x1(c(i)) < origin(1)) && (y1(c(i)) > origin(2))
+            tita2(i,1) = pi-(tita+tita1(i));
+        end
+    end
+    proyec_r = cos(tita2).*r;
+elseif (slope<0) && (slope ~= atan(-pi/2))
+    tita = atan(-slope);
+        tita1= atan(abs((y1(c)-origin(2))./(x1(c)-origin(1))));
+    r = ((x1(c)-origin(1)).^2+(y1(c)-origin(2)).^2).^(1/2);
+
+    for i = 1:length(c)
+        if (x1(c(i)) > origin(1)) && (y1(c(i)) < origin(2))
+            tita2(i,1) = abs(tita-tita1(i));
+        elseif (x1(c(i)) > origin(1)) && (y1(c(i)) > origin(2))
+            tita2(i,1) = (tita+tita1(i));
+        elseif (x1(c(i)) < origin(1)) && (y1(c(i)) < origin(2))
+            tita2(i,1) = pi-(tita+tita1(i));
+        end
+    end
+    proyec_r = cos(tita2).*r;
+end
+   
+if slope == 0
+    proyec_r = x1(c)-min(x1(c));
+end
+if slope == atan(pi/2)
+    proyec_r = y1(c)-min(y1(c));
+end
+
+assignin('base','roi_index_proyec_r', [c proyec_r]);
+
+
+axes(handles.axes8);
+set(handles.axes8,'visible','on');
+scatter(simpler_output(c,1), simpler_output(c,2));
+h1 = scatter(proyec_r,z1(c),50*ones(size(z1(c),1),1),z1(c),'o','filled');
+xlabel('y (nm)');
+ylabel('z (nm)');
+daspect([1 1 1])
+pbaspect([1 1 1])
+xlimits_inicial = xlim;
+h1.SizeData = 50*250/(xlimits_inicial(2)-xlimits_inicial(1));
+daspect([1 1 1])
+set(handles.marker_size_roi_text_tag,'visible', 'on'); 
+set(handles.slider_markersize_roi_tag,'visible', 'on'); 
+set(handles.export_roi_tag,'visible', 'on'); 
+set(handles.render_tag,'enable','on');
+
+
+
+
+% --- Executes on button press in plot_xz_tag.
+function plot_xz_tag_Callback(hObject, eventdata, handles)
+
+roi = evalin('base','roi');
+simpler_output = evalin('base','simpler_output');
+angle_roi = (270-(roi.RotationAngle))*pi/180;
+positions_roi = roi.Position;
+x1 = simpler_output(:,1);
+y1 = simpler_output(:,2);
+z1 = simpler_output(:,3);
+[c,slope, origin] = find_points_ROI([x1 y1],...
+    angle_roi, positions_roi,'x');
+
+ 
+
+tita = atan(slope);
+
+if (slope>0) && (slope ~= atan(pi/2))
+    tita1= atan(abs((y1(c)-origin(2))./(x1(c)-origin(1))));
+    r = ((x1(c)-origin(1)).^2+(y1(c)-origin(2)).^2).^(1/2);
+    for i = 1:length(c)
+        if (x1(c(i)) > origin(1)) && (y1(c(i)) > origin(2))
+            tita2(i,1) = abs(tita-tita1(i));
+        elseif (x1(c(i)) > origin(1)) && (y1(c(i)) < origin(2))
+            tita2(i,1) = (tita+tita1(i));
+        elseif (x1(c(i)) < origin(1)) && (y1(c(i)) > origin(2))
+            tita2(i,1) = pi-(tita+tita1(i));
+        end
+    end
+    proyec_r = cos(tita2).*r;
+elseif (slope<0) && (slope ~= atan(-pi/2))
+    tita = atan(-slope);  
+    tita1= atan(abs((y1(c)-origin(2))./(x1(c)-origin(1))));
+    r = ((x1(c)-origin(1)).^2+(y1(c)-origin(2)).^2).^(1/2);
+
+    for i = 1:length(c)
+        if (x1(c(i)) > origin(1)) && (y1(c(i)) < origin(2))
+            tita2(i,1) = abs(tita-tita1(i));
+        elseif (x1(c(i)) > origin(1)) && (y1(c(i)) > origin(2))
+            tita2(i,1) = (tita+tita1(i));
+        elseif (x1(c(i)) < origin(1)) && (y1(c(i)) < origin(2))
+            tita2(i,1) = pi-(tita+tita1(i));
+        end
+    end
+    max(tita1)
+    max(tita2)
+    proyec_r = cos(tita2).*r;
+end
+   
+if slope == 0
+    proyec_r = x1(c)-min(x1(c));
+end
+if slope == atan(pi/2)
+    proyec_r = y1(c)-min(y1(c));
+end
+
+assignin('base','roi_index_proyec_r', [c proyec_r]);
+
+axes(handles.axes8);
+set(handles.axes8,'visible','on');
+scatter(simpler_output(c,1), simpler_output(c,2));
+h1 = scatter(proyec_r,z1(c),50*ones(size(z1(c),1),1),z1(c),'o','filled');
+xlabel('x (nm)');
+ylabel('z (nm)');
+daspect([1 1 1])
+pbaspect([1 1 1])
+xlimits_inicial = xlim;
+h1.SizeData = 50*250/(xlimits_inicial(2)-xlimits_inicial(1));
+daspect([1 1 1])
+set(handles.marker_size_roi_text_tag,'visible', 'on'); 
+set(handles.slider_markersize_roi_tag,'visible', 'on'); 
+set(handles.export_roi_tag,'visible', 'on'); 
+set(handles.render_tag,'enable','on');
+
+
+
+% --- Executes on slider movement.
+function slider_markersize_roi_tag_Callback(hObject, eventdata, handles)
+slider_value = get(handles.slider_markersize_roi_tag,'Value');
+
+axes(handles.axes8);
+xlimits = xlim;
+h11 = findobj(gcf,'Type','scatter');
+if sum(size(h11))>0
+    h11(1).SizeData = (10+60*slider_value)*250/(xlimits(2)-xlimits(1));
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function slider_markersize_roi_tag_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to slider_markersize_roi_tag (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+end
+
+
+% --- Executes on button press in export_csv_roi_tag.
+function export_csv_roi_tag_Callback(hObject, eventdata, handles)
+
+
+
+% --- Executes on button press in export_roi_tag.
+function export_roi_tag_Callback(hObject, eventdata, handles)
+simpler_output_in = evalin('base','simpler_output');
+roi_index_proyec_r = evalin('base','roi_index_proyec_r');
+simpler_output = simpler_output_in(roi_index_proyec_r(:,1),:);
+simpler_output = [simpler_output roi_index_proyec_r(:,2)];
+export_function(4,simpler_output,handles);
+
+
+% --- Executes on button press in browse_tag.
+function browse_tag_Callback(hObject, eventdata, handles)
+[file,path]= uigetfile({'*.hdf5;*.csv','.csv or .hdf5 files'},'Select a File');
+set(handles.filename_tag,'string',fullfile(path,file))
+
+
+% --- Executes on button press in browse_1_tag.
+function browse_1_tag_Callback(hObject, eventdata, handles)
+[file,path]= uigetfile('*.csv');
+set(handles.excprof_filename_tag,'string',fullfile(path,file))

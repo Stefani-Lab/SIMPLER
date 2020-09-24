@@ -36,34 +36,50 @@ if rz_xyz == 2 % Last operation run: Small ROI (r,z)
                                                 % performs the exportation
 
 elseif rz_xyz == 3 % Last operation run: Small ROI (x,y,z) or Large ROI
-    
+    if roi ~= 4
      if roi == 0 % 'Export whole dataset' option
         c1 = 1:size(simpler_output,1);
      elseif roi == 1 % 'Export current view' option (upper figure)
-    axes(handles.axes1); 
-    xl = xlim; % 'x' limits are obtained from the scatter plot
-    yl = ylim; % idem for 'y' limits
-    c1 = find(simpler_output(:,1)>xl(1) & simpler_output(:,1)<xl(2) &...
-        simpler_output(:,3)>yl(1) & simpler_output(:,3)<yl(2));
-    % 'c1' represents the indices of the molecules shown in the current
+        axes(handles.axes1); 
+        xl = xlim; % 'x' limits are obtained from the scatter plot
+        yl = ylim; % idem for 'y' limits
+        c1 = find(simpler_output(:,1)>xl(1) & simpler_output(:,1)<xl(2) &...
+            simpler_output(:,3)>yl(1) & simpler_output(:,3)<yl(2));
+        % 'c1' represents the indices of the molecules shown in the current
         % view of the scatter plot
      elseif roi == 3 % 'Export current view' option (lower figure)
-    axes(handles.axes3); 
-    xl = xlim; % 'x' limits are obtained from the scatter plot
-    yl = ylim; % idem for 'y' limits
-    c1 = find(simpler_output(:,2)>xl(1) & simpler_output(:,2)<xl(2) &...
-        simpler_output(:,3)>yl(1) & simpler_output(:,3)<yl(2));
-    % 'c1' represents the indices of the molecules shown in the current
-        % view of the scatter plot
+        axes(handles.axes3); 
+        xl = xlim; % 'x' limits are obtained from the scatter plot
+        yl = ylim; % idem for 'y' limits
+        c1 = find(simpler_output(:,2)>xl(1) & simpler_output(:,2)<xl(2) &...
+            simpler_output(:,3)>yl(1) & simpler_output(:,3)<yl(2));
+        % 'c1' represents the indices of the molecules shown in the current
+            % view of the scatter plot     
      end    
-    x1 = simpler_output(c1,1); % x positions of the filtered molecules
-    y1 = simpler_output(c1,2); % y positions of the filtered molecules
-    z = simpler_output(c1,3); % z positions of the filtered molecules
-    frame = simpler_output(c1,6); % frames of the filtered molecules
-    photons = simpler_output(c1,4); % photons of the filtered molecules
-    exportation_file_xyz(x1,y1,z,frame,photons,filename_wformat,handles); % This function
+     x1 = simpler_output(c1,1); % x positions of the filtered molecules
+     y1 = simpler_output(c1,2); % y positions of the filtered molecules
+     z = simpler_output(c1,3); % z positions of the filtered molecules
+     frame = simpler_output(c1,6); % frames of the filtered molecules
+     photons = simpler_output(c1,4); % photons of the filtered molecules
+     exportation_file_xyz(x1,y1,z,frame,photons,filename_wformat,handles); % This function
                                                 % performs the exportation
+    end
                                                 
+    if roi == 4 % 'Export csv (ROI)' option (ROI from "Large ROI" operation)
+         c1 = 1:size(simpler_output,1);
+        % 'c1' represents the indices of the molecules shown in the current
+            % view of the scatter plot. In this case, we have used as input
+            % the indices of the molecules within the chosen ROI. 
+        x1 = simpler_output(c1,1); % x positions of the filtered molecules
+        y1 = simpler_output(c1,2); % y positions of the filtered molecules
+        proyec_r = simpler_output(c1,7); % r positions of the filtered molecules
+        frame = simpler_output(c1,6); % frames of the filtered molecules
+        photons = simpler_output(c1,4); % photons of the filtered molecules
+        z = simpler_output(c1,3); % z positions of the filtered molecules
+        exportation_file_rz(x1,y1,proyec_r,z,frame,photons,['ROI_',filename_wformat],handles); % This function
+                                                    % performs the exportation
+    end
+
 
 elseif rz_xyz == 5 % Last operation run: N0 calibration
     

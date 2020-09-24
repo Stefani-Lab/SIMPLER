@@ -56,9 +56,25 @@ if Illum == 1
     phot=double(photon_raw);
     phot_corr=zeros(size(photon_raw,1),1);
     max_bg = prctile(profile(:),97.5);
-    for i=1:size(phot,1);
-        phot_corr(i,1)=phot(i,1)*(double(max_bg)/(profile(round(xloc(i)...
-            /camera_px),round(yloc(i)/camera_px))));
+    for i=1:size(phot,1)
+        if (ceil(xloc(i)/camera_px) < size(profile,1)) &&...
+             (ceil(yloc(i)/camera_px)< size(profile,2))
+        phot_corr(i,1)=phot(i,1)*(double(max_bg)/(profile(ceil(xloc(i)...
+            /camera_px),ceil(yloc(i)/camera_px))));
+        elseif (ceil(xloc(i)/camera_px) > size(profile,1)) &&...
+             (ceil(yloc(i)/camera_px)< size(profile,2))
+         phot_corr(i,1)=phot(i,1)*(double(max_bg)/(profile(floor(xloc(i)...
+            /camera_px),ceil(yloc(i)/camera_px))));
+        elseif (ceil(xloc(i)/camera_px) < size(profile,1)) &&...
+             (ceil(yloc(i)/camera_px)> size(profile,2))
+         phot_corr(i,1)=phot(i,1)*(double(max_bg)/(profile(ceil(xloc(i)...
+            /camera_px),floor(yloc(i)/camera_px))));
+        elseif (ceil(xloc(i)/camera_px) > size(profile,1)) &&...
+             (ceil(yloc(i)/camera_px)> size(profile,2))
+         phot_corr(i,1)=phot(i,1)*(double(max_bg)/(profile(floor(xloc(i)...
+            /camera_px),floor(yloc(i)/camera_px))));
+        end
+        
     end
 else
     phot_corr = double(photon_raw);
@@ -182,6 +198,11 @@ cla reset;
 cla reset;
     axes(handles.axes6); 
 cla reset;
+    axes(handles.axes7); 
+cla reset;
+    axes(handles.axes8); 
+cla reset;
+
 set(handles.axes1,'visible', 'off');
 set(handles.open_fig_1_tag,'visible', 'off');
 set(handles.axes3,'visible', 'off');
@@ -211,6 +232,16 @@ set(handles.slider_1_tag,'visible', 'off');
 set(handles.slider_3_tag,'visible', 'off'); 
 set(handles.slider_1_text_tag,'visible', 'off'); 
 set(handles.slider_3_text_tag,'visible', 'off'); 
+set(handles.axes7,'visible', 'off'); 
+set(handles.axes8,'visible', 'off'); 
+set(handles.set_small_roi_tag,'visible', 'off'); 
+set(handles.roi_angle_text_tag,'visible', 'off'); 
+set(handles.angle_ROI_tag,'visible', 'off'); 
+set(handles.plot_xz_tag,'visible', 'off'); 
+set(handles.plot_yz_tag,'visible', 'off'); 
+set(handles.marker_size_roi_text_tag,'visible', 'off'); 
+set(handles.slider_markersize_roi_tag,'visible', 'off'); 
+set(handles.export_roi_tag,'visible', 'off'); 
 
 
 
@@ -344,8 +375,35 @@ if rz_xyz == 2 | rz_xyz == 3 | rz_xyz == 4
                                                                  % information.
     elseif rz_xyz == 4 % Large ROI case
         simpler_output = [x1 y1 z1 photons1 ones(length(x1),1) frame1];
-        % For the "Large ROI" operation, the scatter plot option is not
-        % available. The output matrix includes (x,y,z,photons,frame) information.
+        % The output matrix includes (x,y,z,photons,frame) information.
+        if scatter_plot== 1
+            axes(handles.axes7);
+            set(handles.axes7,'visible','on');
+            set(handles.slider_1_tag,'visible', 'on'); 
+            set(handles.slider_1_text_tag,'visible', 'on'); 
+            set(handles.slider_1_tag,'Value',0.66);
+            set(handles.plot_xz_tag,'visible', 'on'); 
+            set(handles.plot_yz_tag,'visible', 'on'); 
+            set(handles.set_small_roi_tag,'visible', 'on'); 
+            set(handles.roi_angle_text_tag,'visible', 'on'); 
+            set(handles.angle_ROI_tag,'visible', 'on'); 
+            set(handles.angle_ROI_tag,'Value',0.5);
+            set(handles.angle_ROI_tag,'enable','off');
+            set(handles.render_tag,'enable','off');
+            h1 = scatter(x1,y1,50*ones(size(z1,1),1),z1,'o','filled');
+            xlabel('x (nm)');
+            ylabel('y (nm)');
+            daspect([1 1 1])
+            pbaspect([1 1 1])
+            xlimits_inicial = xlim;
+            h1.SizeData = 50*250/(xlimits_inicial(2)-xlimits_inicial(1));
+            h = zoom;
+            h.ActionPostCallback = @mycallback;
+            
+
+            
+        end
+        
     end
 end
 % N0 Calibration case

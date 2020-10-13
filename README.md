@@ -1,5 +1,5 @@
 # SIMPLER
- run_SIMPLER is a graphical user interface that runs in Matlab (version 2015a or later with Curve Fitting Tool installed). This app allows users of SIMPLER to perform all necessary operations to decode the axial positions of single molecules directly from 2D-SMLM-TIRF data. 
+ run_SIMPLER is a graphical user interface that runs in Matlab (version 2015a or later with Curve Fitting Tool installed). This app allows users of SIMPLER to perform all necessary operations to decode the axial positions of single molecules directly from 2D-SMLM-TIRF data. There is also the possibility to download SIMPLER as a standalone application, for users who do not have a Matlab license (URL: ).
 
  The software also includes modules to perform the following operations: 
 
@@ -14,10 +14,21 @@
  In the software documentation ("Supplementary Software Documentation.pdf"), users will find a detailed description of how to load files, set the different parameters, calculate z-coordinates of single molecules, and run the different operations available. 
 
 # Requirements
- Matlab 2015a and newer, Curve Fitting Tool installed.
+ Matlab 2015a and newer, Curve Fitting Tool installed. 
+ 
+ For users who do not have Matlab license, Matlab Runtime 9.6 (R2019a) is requiered, which is free and can be downloaded from the web (https://se.mathworks.com/products/compiler/matlab-runtime.html). Alternatively, if users directly download the standalone SIMPLER application, the installer will detect whether Matlab Runtime is installed or not, and download it if it cannot find it.
 
 # Usage
- To use this software in GUI form, set the folder containing the software files (SIMPLER Supplementary Software.zip) as the current directory in Matlab and run in Matlab's command window:
+ 
+ For users without Matlab license: 
+ 
+ The standalone application installer will create a folder called "application", which will contain the "run_SIMPLER.exe" executable. By clicking on this file, SIMPLER will automatically run.
+ 
+
+ For users with Matlab license:
+
+
+ To use this software in GUI form through Matlab, set the folder containing the software files (SIMPLER Supplementary Software.zip) as the current directory in Matlab and run in Matlab's command window:
 
  run_SIMPLER
 

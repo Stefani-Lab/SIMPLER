@@ -156,7 +156,26 @@ if file_format == 1
 else
     N = 4;
 end
+filename = get(handles.filename_tag,'string');
+if filename(end) == '5'
+    filename_woutformat = filename(1:end-5);
+    c_sl = find(filename_woutformat == '\');
+    if sum(c_sl)>0
+        filename_woutformat = filename_woutformat(c_sl(end)+1:end);
+    end
+else
+    filename_woutformat = filename(1:end-4);
+    c_sl = find(filename_woutformat == '\');
+    if sum(c_sl)>0
+        filename_woutformat = filename_woutformat(c_sl(end)+1:end);
+    end
+end
     
-csvwrite(['excitation_profile_',filename_wformat(1:(end-N)),'.csv'],Img_bg);
+[file,path]= uiputfile(['excitation_profile_',filename_woutformat,'.csv']);
+csv_out_folder = path;    
+csv_out_folder = path;
+csv_out_fname = fullfile(csv_out_folder,file); % create output name     
+dlmwrite(csv_out_fname, Img_bg,'delimiter',',');
+% csvwrite(['excitation_profile_',filename_wformat(1:(end-N)),'.csv'],Img_bg);
 
 end

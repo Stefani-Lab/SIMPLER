@@ -1,5 +1,5 @@
 # SIMPLER
- run_SIMPLER is a graphical user interface that runs in Matlab (version 2015a or later with Curve Fitting Tool installed). This app allows users of SIMPLER to perform all necessary operations to decode the axial positions of single molecules directly from 2D-SMLM-TIRF data. There is also the possibility to download SIMPLER as a standalone application, for users who do not have a Matlab license (URL: ).
+ run_SIMPLER is a graphical user interface that runs in Matlab (version 2015a or later with Curve Fitting Tool installed). This app allows users of SIMPLER to perform all necessary operations to decode the axial positions of single molecules directly from 2D-SMLM-TIRF data. There is also the possibility to download run_SIMPLER as a standalone application, for users who do not have a Matlab license (URL: ).
 
  The software also includes modules to perform the following operations: 
 
@@ -16,7 +16,7 @@
 # Requirements
  Matlab 2015a and newer, Curve Fitting Tool installed. 
  
- For users who do not have Matlab license, Matlab Runtime 9.6 (R2019a) is requiered, which is free and can be downloaded from the web (https://se.mathworks.com/products/compiler/matlab-runtime.html). Alternatively, if users directly download the standalone SIMPLER application, the installer will detect whether Matlab Runtime is installed or not, and download it if it cannot find it.
+ For users who do not have Matlab license, Matlab Runtime 9.6 (R2019a) is requiered, which is free and can be downloaded from the web (https://se.mathworks.com/products/compiler/matlab-runtime.html). Alternatively, if users directly download the standalone run_SIMPLER application, the installer will detect whether Matlab Runtime is installed or not, and download it if it cannot find it.
 
 # Usage
  
